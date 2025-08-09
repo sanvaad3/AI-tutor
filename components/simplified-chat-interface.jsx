@@ -27,7 +27,6 @@ export function SimplifiedChatInterface({ sessionId }) {
   const scrollAreaRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Use our custom hook instead of managing state manually
   const {
     messages,
     sendMessage,
@@ -38,7 +37,6 @@ export function SimplifiedChatInterface({ sessionId }) {
     clearMessages,
   } = useChat(sessionId);
 
-  // Function to scroll to bottom
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector(
@@ -50,12 +48,10 @@ export function SimplifiedChatInterface({ sessionId }) {
     }
   };
 
-  // Auto-scroll to bottom when new messages are added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -73,7 +69,6 @@ export function SimplifiedChatInterface({ sessionId }) {
     const currentInput = input.trim();
     setInput(""); // Clear input immediately
 
-    // Send message using our hook
     await sendMessage(currentInput);
   };
 
