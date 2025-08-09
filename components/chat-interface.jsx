@@ -16,13 +16,11 @@ import {
   BookOpen,
   Lightbulb,
 } from "lucide-react";
-// API functionality moved to hooks/use-chat.js
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { TypingMessage } from "@/components/typing-message";
 
-// Simple math renderer component
 const MathRenderer = ({ children, display = false }) => {
   const [rendered, setRendered] = useState("");
 
@@ -115,7 +113,6 @@ export function ChatInterface({
     }
   };
 
-  // Auto-scroll to bottom when new messages are added or during typing
   useEffect(() => {
     scrollToBottom();
   }, [chat.messages, typingMessage]);
@@ -128,7 +125,6 @@ export function ChatInterface({
     }
   }, [typingMessage]);
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -153,10 +149,8 @@ export function ChatInterface({
     const currentInput = input.trim();
     setInput("");
 
-    // Add user message immediately
     onAddMessage(chat.id, userMessage);
 
-    // Update chat title if this is the first message
     if (chat.messages.length === 0) {
       onUpdateTitle(chat.id, currentInput);
     }
@@ -164,14 +158,11 @@ export function ChatInterface({
     setIsLoading(true);
 
     try {
-      // Prepare chat history for API
       const chatHistory = [...chat.messages, userMessage].map((msg) => ({
         role: msg.role,
         content: msg.content,
       }));
 
-      // Note: This component is deprecated. Use SimplifiedChatInterface instead.
-      // const response = await chatApi.sendMessage(chatHistory, sessionId);
       const response = { message: "This component is deprecated. Please use SimplifiedChatInterface." };
       const responseContent =
         response.message ||
@@ -250,7 +241,6 @@ export function ChatInterface({
     "What were the main causes of World War I?",
   ];
 
-  // Custom markdown components for better styling
   const markdownComponents = {
     h1: ({ children }) => (
       <h1 className="text-xl font-bold mb-3 text-slate-900 dark:text-slate-100">
@@ -349,7 +339,6 @@ export function ChatInterface({
     ),
   };
 
-  // Process message content to handle math
   const processMessageContent = (content) => {
     const textContent = String(content || "");
     const parts = textContent.split(/(\$\$[^$]+\$\$|\$[^$]+\$)/g);
