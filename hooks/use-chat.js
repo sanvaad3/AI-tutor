@@ -15,7 +15,6 @@ export function useChat(sessionId) {
   const [error, setError] = useState(null)
   const [isPending, startTransition] = useTransition()
 
-  // Load messages when sessionId changes
   useEffect(() => {
     if (sessionId) {
       loadMessages(sessionId)
@@ -57,7 +56,6 @@ export function useChat(sessionId) {
       timestamp: new Date().toISOString()
     }
     
-    // Optimistically add user message
     setMessages(prev => [...prev, userMessage])
     setError(null)
     setIsLoading(true)
@@ -75,12 +73,10 @@ export function useChat(sessionId) {
           }
           setMessages(prev => [...prev, assistantMessage])
         } else {
-          // Remove optimistic user message on error
           setMessages(messages)
           setError({ message: result.error || 'Failed to send message' })
         }
       } catch (err) {
-        // Remove optimistic user message on error
         setMessages(messages)
         setError({ message: 'Network error. Please try again.' })
       } finally {
@@ -98,9 +94,8 @@ export function useChat(sessionId) {
     if (messages.length > 0) {
       const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')
       if (lastUserMessage) {
-        // Remove failed assistant response if any
         const filteredMessages = messages.filter(m => 
-          !(m.role === 'assistant' && !m.id) // Remove temporary assistant messages
+          !(m.role === 'assistant' && !m.id) 
         )
         setMessages(filteredMessages)
         sendMessage(lastUserMessage.content)
@@ -125,7 +120,6 @@ export function useSessions() {
   const [error, setError] = useState(null)
   const [isPending, startTransition] = useTransition()
 
-  // Auto-fetch sessions on mount
   useEffect(() => {
     fetchSessions()
   }, [])
@@ -158,7 +152,6 @@ export function useSessions() {
         try {
           const result = await createChatSession(title.trim())
           if (result.success && result.data) {
-            // Optimistically add to the top of the list
             setSessions(prev => [result.data, ...prev])
             setError(null)
             resolve(result.data)
@@ -178,7 +171,6 @@ export function useSessions() {
   const deleteSession = useCallback(async (sessionId) => {
     if (!sessionId) return
 
-    // Optimistically remove from UI
     const originalSessions = sessions
     setSessions(prev => prev.filter(s => s.id !== sessionId))
 
@@ -186,14 +178,12 @@ export function useSessions() {
       try {
         const result = await deleteChatSession(sessionId)
         if (!result.success) {
-          // Revert on error
           setSessions(originalSessions)
           setError({ message: result.error || 'Failed to delete session' })
         } else {
           setError(null)
         }
       } catch (err) {
-        // Revert on error
         setSessions(originalSessions)
         setError({ message: 'Failed to delete session' })
       }
@@ -203,13 +193,10 @@ export function useSessions() {
   const updateSessionTitle = useCallback(async (sessionId, newTitle) => {
     if (!newTitle.trim()) return
 
-    // Optimistically update
     setSessions(prev => prev.map(s => 
       s.id === sessionId ? { ...s, title: newTitle.trim() } : s
     ))
 
-    // Note: You'd need to add an updateChatSession action
-    // For now, just keep the optimistic update
   }, [sessions])
 
   return {
